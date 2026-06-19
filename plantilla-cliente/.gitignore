@@ -1,0 +1,16 @@
+# Secretos — NUNCA subir
+*.env
+.env*
+**/service_account*.json
+**/credentials*.json
+**/*secret*
+**/*credential*
+conexiones/secretos*
+
+# Datos pesados / privados
+reportes/*.private*
+*.xlsx#~
+
+# Sistema
+.DS_Store
+Thumbs.db

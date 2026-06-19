@@ -48,6 +48,15 @@ En Windows (PowerShell), reemplaza `~/.claude` por `"$env:USERPROFILE\.claude"`.
 
 Verifica con `claude plugin list` que aparezca `claude-seo@skills-dir: loaded`.
 
+## Modo multi-cliente (agencia)
+
+Para llevar el SEO de varias cuentas, cada cliente es un **proyecto aislado**: su propia carpeta, memoria, bitácora, estudios de KW, conexiones (GSC/GA4/DataForSEO) y repo privado.
+
+- Workspace raíz `~/seo-clientes/` con `REGISTRO.md` + plantilla en `plantilla-cliente/`.
+- **Memoria aislada por cliente** automáticamente (la memoria nativa de Claude Code se indexa por ruta de proyecto).
+- **Credenciales compartidas a nivel agencia** (un service account + 1 login DataForSEO); cada cliente solo aporta *qué* propiedad usar. Setup: `references/01-credenciales-agencia.md`.
+- Alta de cliente (Fase 0.0): `references/00-alta-cliente.md`.
+
 ## Uso
 
-Se activa al iniciar un proyecto SEO de principio a fin, o ante frases como *"orquestar SEO"*, *"proyecto SEO completo"*, *"estrategia + auditoría SEO"*.
+Se activa al iniciar un proyecto SEO de principio a fin, o ante frases como *"orquestar SEO"*, *"proyecto SEO completo"*, *"estrategia + auditoría SEO"*, *"dar de alta un cliente"*.

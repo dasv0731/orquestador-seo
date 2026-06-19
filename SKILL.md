@@ -25,6 +25,29 @@ Si falta alguno, detente y avisa: el orquestador no puede conducir sin ambos. Co
 
 ---
 
+## Modo multi-cliente (agencia)
+
+Cada cuenta es un **proyecto aislado** con su propia carpeta, memoria, bitácora, estudios de KW, conexiones y repo privado. Esto permite llevar el SEO de varias cuentas sin que se mezclen.
+
+**Principios:**
+- **Una carpeta = un cliente = un repo privado.** El working dir al trabajar un cliente es su carpeta → la **memoria nativa de Claude Code queda aislada por cliente automáticamente** (se indexa por ruta de proyecto).
+- **Workspace raíz:** `~/seo-clientes/` con `REGISTRO.md` (índice de todos los clientes) y `_plantilla/` (se copia al dar de alta uno nuevo).
+- **Credenciales = compartidas a nivel agencia, una sola vez** (un service account de Google + API key + 1 login DataForSEO). El email del service account se agrega como usuario en el GSC y GA4 **de cada cliente**. Setup en `references/01-credenciales-agencia.md`.
+- **Qué propiedad usar = por cliente:** cada proyecto guarda su GSC property y GA4 id en `conexiones/conexiones.md`; el orquestador los pasa como argumento (`claude-seo:seo-google gsc <property>`). Nunca hay secretos en los repos de cliente.
+
+La plantilla de proyecto-cliente vive en `plantilla-cliente/` de este skill.
+
+### Fase 0.0 · Alta de cliente (bootstrap)
+Precede a la Fase 0. Da de alta una cuenta nueva. Procedimiento completo en `references/00-alta-cliente.md`:
+1. Copiar `plantilla-cliente/` → `~/seo-clientes/<slug>/`.
+2. Rellenar `PROJECT.md` + `conexiones/conexiones.md` (reemplazar `{placeholders}`).
+3. Verificar credenciales de agencia y que el service account tenga acceso al GSC/GA4 del cliente.
+4. `gh repo create <org>/seo-<slug> --private` + primer commit.
+5. Añadir fila al `REGISTRO.md` del workspace.
+6. Continuar con Fase 0 (discovery).
+
+---
+
 ## El ciclo (6 fases)
 
 Conduce en orden, pero **vuelve a fases anteriores** cuando los datos lo exijan (ver Regla de conflicto). Crea un todo por fase.
