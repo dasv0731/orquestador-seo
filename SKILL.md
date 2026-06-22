@@ -118,6 +118,15 @@ Nunca forzar el plan contra la evidencia, **pero tampoco dejar que el ruido lo r
 
 ---
 
+## Estado compartido y costuras transversales
+
+El estado compartido es la **fuente única de verdad**: las skills de diseño lo escriben, las de ejecución lo leen. El mapa de qué clave produce/consume cada skill, con su **estado de frontera** (🟢 firme / 🟡 en prueba / 🔴 de riesgo), está en `references/02-contratos.md`. Es un mapa **vivo, no un contrato congelado** — sirve para validar handoffs y para que el experimento de frontera 3↔5 sea interpretable. Consúltalo cuando dudes de qué le toca a quién o cuál es el predicado de cierre de una fase.
+
+Algunas decisiones **no pertenecen a una sola skill**: son costuras que varias heredan. No las metas a la fuerza en una caja.
+
+- **Modo de renderizado (CSR / SSR / estático)** — decisión de arquitectura que **las skills 6 (indexabilidad) y 8 (rendimiento) heredan a la vez**. Se decide **una sola vez en discovery** (`seo-master-plan` ref `01` + principio transversal) y se **pasa como argumento** a `claude-seo:seo-technical` y `claude-seo:seo-performance` en Fase 4. Si el contenido crítico solo aparece tras ejecutar JS (CSR), la indexabilidad deja de ser trivial y el costo de rendimiento se mueve al cliente — afecta a ambas, no a una. **Crítico en sitios programáticos** (ej. golgana `/jugadores/*`): si las páginas a escala son CSR, la métrica de % indexación se desploma; verificar el modo de render **antes** de escalar contenido.
+- **i18n** — módulo condicional; solo se instancia si el negocio es multi-región (`claude-seo:seo-hreflang`). No es paso fijo.
+
 ## Cómo decidir qué invocar (heurística rápida)
 
 - ¿Es una decisión de **estructura, arquitectura, copy, o principio**? → `seo-master-plan`.
