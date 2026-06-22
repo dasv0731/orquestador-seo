@@ -91,16 +91,30 @@ Conduce en orden, pero **vuelve a fases anteriores** cuando los datos lo exijan 
 
 ---
 
-## Regla de conflicto (el corazón del orquestador)
+## Gate de medición (antes de abrir cualquier loop de ejecución)
 
-Cuando los **datos de `claude-seo` contradicen un supuesto de `seo-master-plan`**, ganan los datos y se ajusta la estrategia:
+**La medición es un pre-requisito, no una fase final.** Antes de tocar contenido/técnico/enlazado en un cliente (Fases 3–4), debe existir:
+- **Baseline registrado** del estado actual (audit + `seo.db` poblado con GSC/GA4), y
+- **`changes_log` activo** en su `seo.db` para marcar el antes/después de cada cambio.
+
+Sin esto, los loops de ejecución corren a ciegas: no se podrá emitir un veredicto defendible sobre si un cambio funcionó. Si falta el baseline, instálalo primero (pipeline `_tooling`: `sync_gsc`/`sync_ga4`, y `logchange.py` por cada cambio). El pipeline de tracking ES la implementación de este gate.
+
+## Regla de conflicto + arista de retorno (el corazón del orquestador)
+
+Cuando los **datos de `claude-seo` (o del pipeline) contradicen un supuesto de `seo-master-plan`**, ganan los datos. Pero **no todo dato es señal**: antes de propagar, clasifica el veredicto en tres ramas (`report.py --report beforeafter` lo emite a partir de `changes_log` + GSC):
+
+1. **Alta confianza (`mejora` / `regresion`)** → propaga. Si confirma el supuesto, refuerza el criterio de la skill que originó el cambio; si lo **invalida**, reabre el gate de diseño (Fase 1/2).
+2. **`no_determinable`** (muestra o madurez de datos insuficiente) → **NO propaga nada.** El ruido no debe modificar criterios, o el sistema "aprende de fantasmas". Espera más datos.
+3. **`sin_efecto`** (hay datos suficientes, no hubo movimiento) → nulo confiable; registra que ese cambio no movió la aguja, no reabras diseño.
+
+Ejemplos de conflicto que (con veredicto de alta confianza) ajustan la estrategia:
 
 - Volumen real insuficiente para un spoke planeado → **no abrir el spoke** (disciplina anti-thin, ref `08`). Documentar y diferir a fase 2 con validación GSC.
 - Una página secundaria gana impresiones por la query objetivo → **redirigir el canonical** (ref `03`, anti-canibalización).
 - Auditoría revela deuda técnica que mata CWV → **priorizar Fase 4 técnica** antes de escalar contenido.
 - Competidor domina un cluster con autoridad inalcanzable → **re-priorizar clusters** hacia gaps reales (ref `11`).
 
-Nunca forzar el plan contra la evidencia. El spec es una hipótesis; los datos la corrigen.
+Nunca forzar el plan contra la evidencia, **pero tampoco dejar que el ruido lo reescriba**. El spec es una hipótesis; los datos de alta confianza la corrigen; los `no_determinable` se ignoran hasta madurar.
 
 ---
 
