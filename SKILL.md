@@ -31,6 +31,7 @@ Cada capacidad tiene UNA skill dueña. `claude-seo:*` es **gap-filler**: solo pa
 | Core Web Vitals | **seo-vitals** |
 | Backlinks / off-page | **linkbuilding** |
 | Secciones/layout/copy de UNA página | **diseno-secciones** |
+| Análisis de HTML semántico de una página | **html-semantico** |
 | Redacción informacional (silo aparte) | **content-engine** |
 | Veredicto antes/después de un cambio | **seo-cambios** |
 | Reporte / dashboard | **seo-dashboard** |
@@ -40,7 +41,7 @@ El orquestador nunca duplica: si una capacidad existe en una skill, se delega.
 
 ## Dependencias (verificar antes de empezar)
 
-Skills del ecosistema esperadas en `~/.claude/skills/` (repos privados en `dasv0731`): `seo-master-plan`, `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `seo-cambios`, `seo-dashboard`, `content-engine`. Gap-filler: `claude-seo` (se auto-carga como `claude-seo@skills-dir`).
+Skills del ecosistema esperadas en `~/.claude/skills/` (repos privados en `dasv0731`): `seo-master-plan`, `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `html-semantico`, `seo-cambios`, `seo-dashboard`, `content-engine`. Gap-filler: `claude-seo` (se auto-carga como `claude-seo@skills-dir`).
 
 Si falta una skill crítica para la fase en curso, detente y avisa. Comprueba con `claude plugin list` y `ls ~/.claude/skills/`.
 
