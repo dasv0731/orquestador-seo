@@ -1,144 +1,142 @@
 ---
 name: orquestador-seo
-description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (intake → research → design → plans → build validation → monitor) by routing each phase to the right skill — strategy/structure to seo-master-plan, live data/audits/validation to claude-seo. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
+description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (bootstrap → diagnosis/framing → architecture → spec/plans → build/validation → monitor) by routing each phase to the OWNING skill of the ecosystem (base-cliente, seo-setup-cliente, seo-sync, extraccion, arquitectura-seo, seo-master-plan, diseno-secciones, schema-graph, interlinking, geo-audit, seo-vitals, linkbuilding, seo-analisis, seo-analisis-gsc, seo-cambios, seo-dashboard, content-engine); claude-seo:* only fills gaps. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
 ---
 
 # Orquestador SEO
 
-Punto de entrada único de un proyecto SEO completo. **No hace el trabajo: lo enruta.** Conduce el ciclo de vida delegando cada fase al skill correcto y resolviendo los conflictos entre estrategia y datos reales.
+Punto de entrada único de un proyecto SEO completo. **No hace el trabajo: lo enruta** a la skill dueña de cada capacidad y resuelve los conflictos entre la estrategia y los datos reales.
+
+## Frontera (invariante)
+
+- El orquestador es **skill** y es **runtime**: secuencia skills, gestiona estado/gates y aplica la arista de retorno. No toma decisiones de SEO.
+- `seo-master-plan` = **artefacto** (spec §0–§14 + planes). El orquestador lo invoca; no lo suplanta.
+- **Sustrato de comunicación:** las skills no se llaman entre sí; dejan/leen archivos en la carpeta del cliente `Clientes\<slug>\` y tablas en `data\seo.db`. El mapa producto/consumo vive en `references/02-contratos.md`.
 
 ## División de labor (la regla mental)
 
-| Skill | Responde | Aporta |
-|---|---|---|
-| **`seo-master-plan`** | **QUÉ y POR QUÉ** | Estrategia, estructura, spec §0–§14, planes, principios de honestidad, KPIs como marco |
-| **`claude-seo:*`** | **QUÉ ES HOY y SI FUNCIONA** | Datos en vivo, auditorías, keyword volumes, schema gen/validación, técnico, local, GEO, backlinks, drift |
+Cada capacidad tiene UNA skill dueña. `claude-seo:*` es **gap-filler**: solo para lo que el ecosistema no cubre.
 
-`seo-master-plan` decide la jugada; `claude-seo` mide el campo y valida que funcionó. El orquestador nunca duplica: si una capacidad existe en un skill, se delega.
+| Dominio | Skill dueña |
+|---|---|
+| Estrategia, spec §0–§14, planes, KPIs/gates, principios, migración | **seo-master-plan** (CONSUME artefactos) |
+| Árbol de URLs + estudio de keywords | **arquitectura-seo** (`arquitectura.csv`, `enlazado.csv`, `mapeo-301.csv`, `mapa-keywords.csv`, `sitio.yaml`) |
+| Conocimiento de negocio | **base-cliente** (`base\contexto-<slug>.md`) |
+| Conexiones + poblar/actualizar seo.db | **seo-setup-cliente** (alta) · **seo-sync** (ingesta) |
+| Crawl del sitio (HTML, schemas, issues, inlinks) | **extraccion** |
+| Diagnóstico de datos (huérfanas, index bloat, CTR, quick wins, canibalización, 404) | **seo-analisis** · **seo-analisis-gsc** |
+| PageRank interno / enlazado real | **interlinking** |
+| JSON-LD conectado del dominio | **schema-graph** |
+| Visibilidad/citability AI | **geo-audit** |
+| Core Web Vitals | **seo-vitals** |
+| Backlinks / off-page | **linkbuilding** |
+| Secciones/layout/copy de UNA página | **diseno-secciones** |
+| Redacción informacional (silo aparte) | **content-engine** |
+| Veredicto antes/después de un cambio | **seo-cambios** |
+| Reporte / dashboard | **seo-dashboard** |
+| **Gap-filler** (content-brief competitivo, auditoría single-page ad-hoc, hreflang/i18n, fallback si falta una skill propia) | **claude-seo:*** |
+
+El orquestador nunca duplica: si una capacidad existe en una skill, se delega.
 
 ## Dependencias (verificar antes de empezar)
 
-- **`seo-master-plan`** — instalado en `~/.claude/skills/seo-master-plan/` (repo: `dasv0731/seo-strategy`).
-- **`claude-seo`** — cargado como `claude-seo@skills-dir` desde `~/.claude/skills/claude-seo/` (repo: `AgriciDaniel/claude-seo`). Expone skills/agentes namespaced `claude-seo:*`.
+Skills del ecosistema esperadas en `~/.claude/skills/` (repos privados en `dasv0731`): `seo-master-plan`, `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `seo-cambios`, `seo-dashboard`, `content-engine`. Gap-filler: `claude-seo` (se auto-carga como `claude-seo@skills-dir`).
 
-Si falta alguno, detente y avisa: el orquestador no puede conducir sin ambos. Comprobar con `claude plugin list` (debe aparecer `claude-seo@skills-dir: loaded`) y `ls ~/.claude/skills/seo-master-plan`.
+Si falta una skill crítica para la fase en curso, detente y avisa. Comprueba con `claude plugin list` y `ls ~/.claude/skills/`.
 
----
+## Multi-cliente (agencia)
 
-## Modo multi-cliente (agencia)
+Cada cuenta es un **proyecto aislado** con su carpeta canónica `C:\Users\Marke\Documents\Respaldo SEO\Clientes\<slug>\`. El working dir al trabajar un cliente es esa carpeta → la **memoria nativa de Claude Code queda aislada por cliente** (se indexa por ruta de proyecto). **No hay repo git por cliente ni registro central**: la carpeta + `data\seo.db` son la fuente de verdad.
 
-Cada cuenta es un **proyecto aislado** con su propia carpeta, memoria, bitácora, estudios de KW, conexiones y repo privado. Esto permite llevar el SEO de varias cuentas sin que se mezclen.
+Credenciales = **agencia, una sola vez**: service account de Google en `~/.config/claude-seo/google-api.json` (con acceso al GSC/GA4 de cada cliente), login DataForSEO, tokens DinoRank/Clarity con scope local en `~/.claude.json`. Las gestiona **seo-setup-cliente**; el orquestador no las documenta de nuevo. Nunca hay secretos en `Clientes\`.
 
-**Principios:**
-- **Una carpeta = un cliente = un repo privado.** El working dir al trabajar un cliente es su carpeta → la **memoria nativa de Claude Code queda aislada por cliente automáticamente** (se indexa por ruta de proyecto).
-- **Workspace raíz:** `~/seo-clientes/` con `REGISTRO.md` (índice de todos los clientes) y `_plantilla/` (se copia al dar de alta uno nuevo).
-- **Credenciales = compartidas a nivel agencia, una sola vez** (un service account de Google + API key + 1 login DataForSEO). El email del service account se agrega como usuario en el GSC y GA4 **de cada cliente**. Setup en `references/01-credenciales-agencia.md`.
-- **Qué propiedad usar = por cliente:** cada proyecto guarda su GSC property y GA4 id en `conexiones/conexiones.md`; el orquestador los pasa como argumento (`claude-seo:seo-google gsc <property>`). Nunca hay secretos en los repos de cliente.
+### Fase 0.0 · Bootstrap de cliente (delegado)
+Da de alta una cuenta nueva secuenciando skills dueñas — **no reimplementa alta**:
+1. Crear `Clientes\<slug>\` (slug kebab-case, minúsculas, sin tildes/espacios).
+2. **seo-setup-cliente** → `conexiones\conexiones.json` + `data\seo.db`.
+3. **base-cliente** → `base\` + `base\contexto-<slug>.md`.
 
-La plantilla de proyecto-cliente vive en `plantilla-cliente/` de este skill.
+**Gate de arranque:** no entrar al ciclo sin `conexiones\conexiones.json`, `data\seo.db` y `base\contexto-<slug>.md`.
 
-### Fase 0.0 · Alta de cliente (bootstrap)
-Precede a la Fase 0. Da de alta una cuenta nueva. Procedimiento completo en `references/00-alta-cliente.md`:
-1. Copiar `plantilla-cliente/` → `~/seo-clientes/<slug>/`.
-2. Rellenar `PROJECT.md` + `conexiones/conexiones.md` (reemplazar `{placeholders}`).
-3. Verificar credenciales de agencia y que el service account tenga acceso al GSC/GA4 del cliente.
-4. `gh repo create <org>/seo-<slug> --private` + primer commit.
-5. Añadir fila al `REGISTRO.md` del workspace.
-6. Continuar con Fase 0 (discovery).
+## El ciclo (por escenario)
 
----
+**Fase 0 · Determinar el escenario.** ¿Hay sitio vivo con GSC/GA4 pobladas y contenido que crawlear? → **A (existente)**. ¿No hay sitio ni datos? → **B (greenfield)**.
 
-## El ciclo (6 fases)
+**Espina común** (el master se parte en FRAMING y ENSAMBLAJE alrededor de arquitectura-seo):
+`base-cliente → master FRAMING (§0–§2 → arquitectura\data\enfoque.md) → arquitectura-seo (árbol) → master ENSAMBLAJE (§3–§14 → spec+planes)`.
 
-Conduce en orden, pero **vuelve a fases anteriores** cuando los datos lo exijan (ver Regla de conflicto). Crea un todo por fase.
+Crea un todo por paso y vuelve a pasos anteriores cuando los datos lo exijan (Regla de conflicto).
 
-### Fase 0 · Intake & baseline
-**Objetivo:** entender el negocio + fotografiar el estado actual real.
-- Estrategia → `seo-master-plan` ref `01-discovery.md` (cuestionario 4 niveles). **No avanzar sin Nivel 1.** Identificar la **restricción dominante** (§0.1).
-- Datos (si el sitio existe) → `claude-seo:seo-audit` (auditoría completa), `claude-seo:seo-technical` (crawl/indexabilidad), `claude-seo:seo-google` (GSC/CrUX/GA4 baseline).
-- Competidores → `claude-seo:seo-dataforseo` + `claude-seo:seo-backlinks`.
-**Salida:** discovery doc + baseline audit. Decisión: ¿greenfield, básico, o migración?
+### Escenario A — existente (diagnosticar → rediseñar → migrar → monitorear)
+```
+0. seo-setup-cliente + base-cliente                          (Fase 0.0)
+1. seo-sync BACKFILL  ∥  extraccion crawl                    (paralelo)
+2. DIAGNÓSTICO (leen lo de 1):
+     seo-analisis · seo-analisis-gsc · interlinking ·
+     schema-graph · geo-audit · seo-vitals · linkbuilding
+3. seo-master-plan FRAMING (§0–§2 → enfoque.md; restricción dominante)
+4. arquitectura-seo (modo migración → arquitectura.csv + mapeo-301.csv)
+5. seo-master-plan ENSAMBLAJE (§3–§14 → spec sabor MIGRACIÓN + planes)
+6. Ejecución: diseno-secciones · content-engine · schema-graph
+7. MONITOREO: seo-cambios (logchange + veredicto) · seo-dashboard ·
+     re-corridas geo-audit/seo-vitals/linkbuilding · seo-sync diario
+```
 
-### Fase 1 · Research (data-informed)
-**Objetivo:** keywords y clusters anclados en volúmenes reales, no estimaciones.
-- Datos → `claude-seo:seo-cluster` (clustering por SERP overlap) + `claude-seo:seo-dataforseo` (volúmenes/dificultad reales) + `claude-seo:seo-sxo` (intent / page-type).
-- Estrategia → alimentar `seo-master-plan` ref `08-keywords-clusters.md` (metodología 4 pasos, mapeo 1+3-5, conteo de páginas).
-**Salida:** mapa de keywords por cluster con datos en vivo + total de páginas indexables sostenible.
-
-### Fase 2 · Design Spec
-**Objetivo:** el spec §0–§14, ahora informado por auditoría + datos reales.
-- Estrategia → `seo-master-plan` ref `02-spec-skeleton.md` (conducir con `superpowers:brainstorming`). Arquitectura: ref `03`. Schema: ref `04`. Local: ref `05`. GEO/E-E-A-T: ref `06`. Técnico: ref `07`.
-- Validación de diseño → `claude-seo:seo-schema` (validar el grafo JSON-LD propuesto), `claude-seo:seo-geo` (citability/AI), `claude-seo:seo-local`/`claude-seo:seo-maps` (factibilidad local).
-**Salida:** spec aprobado en `docs/superpowers/specs/`.
-
-### Fase 3 · Planes de implementación
-**Objetivo:** planes ejecutables tarea-por-tarea.
-- Estrategia → `seo-master-plan` ref `12-plan-phases.md` (15 fases, Fase 0 pre-requisitos, Self-Review) con `superpowers:writing-plans`. Roadmap/contenido: ref `09`.
-- Datos → `claude-seo:seo-content-brief` para briefs competitivos por pieza (complementa `seo-master-plan` `templates/content-brief.md`).
-**Salida:** planes en `docs/superpowers/plans/` + briefs de contenido.
-
-### Fase 4 · Build validation
-**Objetivo:** validar la implementación contra el spec antes de lanzar.
-- Datos → `claude-seo:seo-page` (página por página), `claude-seo:seo-technical`, `claude-seo:seo-schema`, `claude-seo:seo-sitemap`, `claude-seo:seo-hreflang` (si multi-idioma), `claude-seo:seo-images`, `claude-seo:seo-content` (calidad/E-E-A-T/QRG).
-- Estrategia → checklist pre-launch de `seo-master-plan` ref `12` (Definition of Done, nunca enlazar a 404).
-**Salida:** checklist pre-launch sin bloqueantes.
-
-### Fase 5 · Launch & monitor
-**Objetivo:** lanzar y medir contra KPIs + decision gates.
-- Datos → `claude-seo:seo-google` (GSC/CrUX/GA4 continuo), `claude-seo:seo-drift` (regresiones post-deploy), `claude-seo:seo-maps` (rank local), `claude-seo:seo-backlinks` (crecimiento de autoridad).
-- Estrategia → `seo-master-plan` ref `10-kpis.md` (jerarquía 3 tiers, atribución, decision gates M3/M6/M9) + ref `11` (link building).
-**Salida:** dashboard + reporte por cadencia. Volver a Fase 1/2 en cada decision gate.
-
----
+### Escenario B — greenfield (diseñar → construir → validar → lanzar → monitorear)
+```
+0. seo-setup-cliente + base-cliente                          (Fase 0.0)
+1. seo-master-plan FRAMING (§0–§2 → enfoque.md)
+2. arquitectura-seo (modo greenfield: estudio de kws → árbol nuevo, sin inventario/301)
+3. seo-master-plan ENSAMBLAJE (§3–§14 → spec sabor FOUNDATION + planes)
+4. BUILD: diseno-secciones (modo propuesta) · content-engine · schema-graph
+5. VALIDACIÓN pre-launch (staging): seo-vitals · geo-audit · interlinking · html-semantico
+6. LAUNCH: sitemap + IndexNow + solicitar indexación
+7. MONITOREO: seo-sync empieza a capturar GSC/GA4 → converge con Escenario A
+```
+A y B convergen en el **monitoreo con seo.db poblado**.
 
 ## Gate de medición (antes de abrir cualquier loop de ejecución)
 
-**La medición es un pre-requisito, no una fase final.** Antes de tocar contenido/técnico/enlazado en un cliente (Fases 3–4), debe existir:
-- **Baseline registrado** del estado actual (audit + `seo.db` poblado con GSC/GA4), y
-- **`changes_log` activo** en su `seo.db` para marcar el antes/después de cada cambio.
-
-Sin esto, los loops de ejecución corren a ciegas: no se podrá emitir un veredicto defendible sobre si un cambio funcionó. Si falta el baseline, instálalo primero (pipeline `_tooling`: `sync_gsc`/`sync_ga4`, y `logchange.py` por cada cambio). El pipeline de tracking ES la implementación de este gate.
+La medición es **pre-requisito, no fase final**. Antes de tocar contenido/técnico/enlazado (ejecución) debe existir: **baseline** registrado (crawl + `seo.db` con GSC/GA4 vía seo-sync) y **`changes_log` activo** para marcar el antes/después. Sin esto, los loops corren a ciegas. Lo instala **seo-setup-cliente** (crea `changes_log`) + **seo-sync** (puebla el baseline); cada cambio se registra con **seo-cambios** (`logchange`).
 
 ## Regla de conflicto + arista de retorno (el corazón del orquestador)
 
-Cuando los **datos de `claude-seo` (o del pipeline) contradicen un supuesto de `seo-master-plan`**, ganan los datos. Pero **no todo dato es señal**: antes de propagar, clasifica el veredicto en tres ramas (`report.py --report beforeafter` lo emite a partir de `changes_log` + GSC):
+Cuando los **datos contradicen un supuesto del spec**, ganan los datos — pero **no todo dato es señal**. Clasifica el veredicto (lo emite **seo-cambios**: `changes_log` → `report.py --report beforeafter`) en 3 ramas:
 
-1. **Alta confianza (`mejora` / `regresion`)** → propaga. Si confirma el supuesto, refuerza el criterio de la skill que originó el cambio; si lo **invalida**, reabre el gate de diseño (Fase 1/2).
-2. **`no_determinable`** (muestra o madurez de datos insuficiente) → **NO propaga nada.** El ruido no debe modificar criterios, o el sistema "aprende de fantasmas". Espera más datos.
-3. **`sin_efecto`** (hay datos suficientes, no hubo movimiento) → nulo confiable; registra que ese cambio no movió la aguja, no reabras diseño.
+1. **Alta confianza (`mejora` / `regresion`)** → propaga. Si confirma el supuesto, refuerza el criterio; si lo **invalida**, reabre el gate de diseño (FRAMING/arquitectura-seo).
+2. **`no_determinable`** (muestra o madurez insuficiente) → **NO propaga.** El ruido no reescribe criterios ("aprender de fantasmas"). Espera más datos.
+3. **`sin_efecto`** (datos suficientes, sin movimiento) → nulo confiable; registra que no movió la aguja, no reabras diseño.
 
 Ejemplos de conflicto que (con veredicto de alta confianza) ajustan la estrategia:
+- Volumen real insuficiente para un spoke planeado → **no abrir el spoke** (anti-thin; arquitectura-seo / master §9).
+- Una página secundaria gana impresiones por la query objetivo → **redirigir el canonical** (anti-canibalización; seo-analisis-gsc + arquitectura-seo).
+- Auditoría revela deuda técnica que mata CWV (seo-vitals) → **priorizar lo técnico** antes de escalar contenido.
+- Competidor domina un cluster con autoridad inalcanzable → **re-priorizar clusters** hacia gaps reales (linkbuilding).
 
-- Volumen real insuficiente para un spoke planeado → **no abrir el spoke** (disciplina anti-thin, ref `08`). Documentar y diferir a fase 2 con validación GSC.
-- Una página secundaria gana impresiones por la query objetivo → **redirigir el canonical** (ref `03`, anti-canibalización).
-- Auditoría revela deuda técnica que mata CWV → **priorizar Fase 4 técnica** antes de escalar contenido.
-- Competidor domina un cluster con autoridad inalcanzable → **re-priorizar clusters** hacia gaps reales (ref `11`).
-
-Nunca forzar el plan contra la evidencia, **pero tampoco dejar que el ruido lo reescriba**. El spec es una hipótesis; los datos de alta confianza la corrigen; los `no_determinable` se ignoran hasta madurar.
-
----
+Nunca forzar el plan contra la evidencia, **pero tampoco dejar que el ruido lo reescriba**.
 
 ## Estado compartido y costuras transversales
 
-El estado compartido es la **fuente única de verdad**: las skills de diseño lo escriben, las de ejecución lo leen. El mapa de qué clave produce/consume cada skill, con su **estado de frontera** (🟢 firme / 🟡 en prueba / 🔴 de riesgo), está en `references/02-contratos.md`. Es un mapa **vivo, no un contrato congelado** — sirve para validar handoffs y para que el experimento de frontera 3↔5 sea interpretable. Consúltalo cuando dudes de qué le toca a quién o cuál es el predicado de cierre de una fase.
+El estado compartido (`Clientes\<slug>\` + `seo.db`) es la **fuente única de verdad**: las skills de diseño escriben, las de ejecución leen. El mapa producto/consumo por skill, con su estado de frontera (🟢 firme / 🟡 en prueba / 🔴 de riesgo) y el experimento vivo 3↔5, está en `references/02-contratos.md`. Consúltalo ante cualquier duda de "a quién le toca".
 
-Algunas decisiones **no pertenecen a una sola skill**: son costuras que varias heredan. No las metas a la fuerza en una caja.
-
-- **Modo de renderizado (CSR / SSR / estático)** — decisión de arquitectura que **las skills 6 (indexabilidad) y 8 (rendimiento) heredan a la vez**. Se decide **una sola vez en discovery** (`seo-master-plan` ref `01` + principio transversal) y se **pasa como argumento** a `claude-seo:seo-technical` y `claude-seo:seo-performance` en Fase 4. Si el contenido crítico solo aparece tras ejecutar JS (CSR), la indexabilidad deja de ser trivial y el costo de rendimiento se mueve al cliente — afecta a ambas, no a una. **Crítico en sitios programáticos** (ej. golgana `/jugadores/*`): si las páginas a escala son CSR, la métrica de % indexación se desploma; verificar el modo de render **antes** de escalar contenido.
-- **i18n** — módulo condicional; solo se instancia si el negocio es multi-región (`claude-seo:seo-hreflang`). No es paso fijo.
+Algunas decisiones **no pertenecen a una sola skill** (costuras que varias heredan):
+- **Modo de render (CSR/SSR/estático)** — se decide una vez en discovery (master FRAMING) y lo heredan a la vez la **indexabilidad** (crawl de extraccion + arquitectura-seo) y el **rendimiento** (seo-vitals). Crítico en sitios programáticos: si las páginas a escala son CSR, la % de indexación se desploma; verificar el render **antes** de escalar contenido.
+- **i18n** — módulo condicional; único caso gap-filler estructural → `claude-seo:seo-hreflang`. Solo si el negocio es multi-región.
 
 ## Cómo decidir qué invocar (heurística rápida)
 
-- ¿Es una decisión de **estructura, arquitectura, copy, o principio**? → `seo-master-plan`.
-- ¿Necesitas un **número real, un estado actual, o validar algo en vivo**? → `claude-seo:*`.
-- ¿Es una **pieza de contenido**? → brief con ambos (`seo-master-plan` template + `claude-seo:seo-content-brief`), redacción con principios de `seo-master-plan` ref `06`/`09`, validación con `claude-seo:seo-content`.
-- ¿Es la **estructura de secciones, layout o copy de UNA página concreta** (proponer o auditar sus secciones, informes para diseñador/redactor)? → `diseno-secciones`.
-- ¿No estás seguro de qué `claude-seo:*` aplica? → empieza por `claude-seo:seo` (su orquestador interno) o `claude-seo:seo-audit`.
+- ¿Estructura, arquitectura, árbol de URLs o estudio de kws? → **arquitectura-seo** (y el master lo consume).
+- ¿Estrategia, spec, planes, principios o KPIs? → **seo-master-plan**.
+- ¿Un número real, un estado actual o validar en vivo? → la skill dueña del dominio (seo-vitals CWV, geo-audit AI, linkbuilding backlinks, interlinking enlazado, seo-analisis/gsc datos).
+- ¿Secciones/layout/copy de UNA página? → **diseno-secciones**.
+- ¿Una pieza de contenido informacional? → **content-engine** (brief competitivo con `claude-seo:seo-content-brief` si aplica).
+- ¿Algo sin dueño en el ecosistema (hreflang, auditoría single-page ad-hoc)? → **claude-seo:*** (gap-filler).
 
 ## Anti-patrones
 
-- **Saltarse Fase 0 / la restricción dominante** → plan sin ancla. Igual que en `seo-master-plan`.
-- **Construir el spec con volúmenes estimados** cuando `claude-seo:seo-dataforseo` puede dar reales → decisiones sobre arena.
-- **Duplicar trabajo** (re-hacer a mano lo que un skill ya hace) → enruta, no reimplementes.
-- **Ignorar la Regla de conflicto** → spec bonito que no rankea.
-- **Lanzar sin Fase 4** → deuda técnica/schema roto en producción.
+- **Saltarse Fase 0 / la restricción dominante** → plan sin ancla.
+- **Construir el spec con volúmenes estimados** cuando arquitectura-seo da reales → decisiones sobre arena.
+- **Duplicar trabajo** (rehacer a mano lo que una skill ya hace) → enruta, no reimplementes.
+- **Usar claude-seo como fuente primaria** cuando existe la skill dueña → rompe el modelo gap-filler.
+- **Ignorar la Regla de conflicto** o dejar que el ruido reescriba el plan → spec bonito que no rankea, o aprender de fantasmas.
+- **Ejecutar sin el Gate de medición** (baseline + changes_log) → cambios sin veredicto defendible.
