@@ -132,6 +132,7 @@ Algunas decisiones **no pertenecen a una sola skill**: son costuras que varias h
 - ¿Es una decisión de **estructura, arquitectura, copy, o principio**? → `seo-master-plan`.
 - ¿Necesitas un **número real, un estado actual, o validar algo en vivo**? → `claude-seo:*`.
 - ¿Es una **pieza de contenido**? → brief con ambos (`seo-master-plan` template + `claude-seo:seo-content-brief`), redacción con principios de `seo-master-plan` ref `06`/`09`, validación con `claude-seo:seo-content`.
+- ¿Es la **estructura de secciones, layout o copy de UNA página concreta** (proponer o auditar sus secciones, informes para diseñador/redactor)? → `diseno-secciones`.
 - ¿No estás seguro de qué `claude-seo:*` aplica? → empieza por `claude-seo:seo` (su orquestador interno) o `claude-seo:seo-audit`.
 
 ## Anti-patrones
