@@ -1,6 +1,6 @@
 ---
 name: orquestador-seo
-description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (bootstrap → diagnosis/framing → architecture → spec/plans → build/validation → monitor) by routing each phase to the OWNING skill of the ecosystem (base-cliente, seo-setup-cliente, seo-sync, extraccion, arquitectura-seo, seo-master-plan, diseno-secciones, schema-graph, interlinking, geo-audit, seo-vitals, linkbuilding, seo-analisis, seo-analisis-gsc, seo-cambios, seo-dashboard, content-engine); claude-seo:* only fills gaps. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
+description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (bootstrap → diagnosis/framing → architecture → spec/plans → build/validation → monitor) by routing each phase to the OWNING skill of the ecosystem (base-cliente, seo-setup-cliente, seo-sync, extraccion, arquitectura-seo, seo-master-plan, diseno-secciones, schema-graph, interlinking, geo-audit, seo-vitals, linkbuilding, seo-analisis, seo-analisis-gsc, html-semantico, seo-cambios, seo-dashboard, content-engine); claude-seo:* only fills gaps. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
 ---
 
 # Orquestador SEO

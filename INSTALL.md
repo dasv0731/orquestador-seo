@@ -16,7 +16,7 @@ git clone https://github.com/dasv0731/orquestador-seo.git ~/.claude/skills/orque
 ## 2. Instalar las skills del ecosistema
 Cada capacidad la aporta su skill dueña; instálalas en `~/.claude/skills/` desde sus repos privados (`dasv0731`) y sigue el INSTALL de cada una para sus dependencias:
 
-`seo-master-plan` (repo seo-strategy), `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `seo-cambios`, `seo-dashboard`, `content-engine`.
+`seo-master-plan` (repo seo-strategy), `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `html-semantico`, `seo-cambios`, `seo-dashboard`, `content-engine`.
 
 Gap-filler:
 ```bash

@@ -99,7 +99,7 @@ A y B convergen en el **monitoreo con seo.db poblado**.
 | 4 | Convención de URLs | arquitectura-seo (plegada en 3) | patrón por clase de URL | 🟢 firme |
 | 5 | Enlazado interno | arquitectura-seo `enlazado.csv` · interlinking (verificación) | reglas de enlace + flujo a money pages | 🟡 **en prueba (3↔5)** |
 
-### Capa 3 — Medición como gate (antes de ejecutar)
+### Gate — Medición (entre diseño y ejecución)
 
 | # | Responsabilidad | Dónde vive hoy | Hecho | Frontera |
 |---|---|---|---|---|
