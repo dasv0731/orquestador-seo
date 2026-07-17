@@ -25,6 +25,7 @@ Artefactos clave: `conexiones\conexiones.json` (seo-setup), `data\seo.db` (setup
 `base\contexto-<slug>.md` (base-cliente), `sitio.yaml` (arquitectura-seo emite),
 `arquitectura\resultados\*.csv` + `arquitectura\data\enfoque.md`, `schema-graph\`, `resultados\`
 (interlinking), `cwv\` (seo-vitals), `geo\` (geo-audit), `linkbuilding\`, `secciones\<slug-pagina>\`,
+`medicion\eventos\` (instrumentacion-eventos, contrato 1A.0), `medicion\cro\` (cro),
 `docs\superpowers\{discovery,specs,plans}\` (master).
 
 ---
@@ -35,7 +36,9 @@ Artefactos clave: `conexiones\conexiones.json` (seo-setup), `data\seo.db` (setup
 |---|---|---|
 | **base-cliente** | docs/fuentes; opcional crawl de extraccion | `base\` + `base\contexto-<slug>.md` |
 | **seo-setup-cliente** | credenciales (google-api.json, ~/.claude.json) | `conexiones\conexiones.json` + `data\seo.db` |
-| **seo-sync** | conexiones.json + APIs (GSC/GA4/Clarity/DataForSEO) | puebla `seo.db` |
+| **seo-sync** | conexiones.json + APIs (GSC/GA4/Clarity/DataForSEO/DinoRank) + `medicion\eventos\{eventos,estado}.json` (gate 1A.0) + `data\clarity-heatmaps\*.csv` | tablas `gsc_daily, ga4_daily, conversions (1A.1), clarity_daily, clarity_heatmap, index_status, rank_tracking, page_content, core_keywords (sync_keywords ← DinoRank tracking)` |
+| **instrumentacion-eventos** | crawl (`internal_html.csv` + `page_source\`), `base\contexto`, `sitio.yaml`, conexiones.json, seo.db (solo lectura, priorizar) | `medicion\eventos\{eventos.json, estado.json, gtm-container.json, plan-ga4.md}` (contrato 1A.0; NO escribe seo.db) |
+| **cro** | `hallazgos` (módulo `rank_no_convierte`), `clarity_heatmap`, `medicion\eventos\eventos.json`, `cwv\seo.db`, `page_source\` | tabla `cro_backlog` + `medicion\cro\{briefs, worklist-clarity.md, corridas\}` |
 | **extraccion** | `sitio.yaml`, plantillas SF | `data\*.csv` + `page_source\` + `historico\<fecha>\` |
 | **arquitectura-seo** | `base\`, `conexiones\`, `keywords\`, seo.db (GSC), `arquitectura\data\enfoque.md`, `inventario\` (si existe) | `arquitectura\resultados\{arquitectura.csv, enlazado.csv, mapeo-301.csv, mapa-keywords.csv}` + `sitio.yaml` |
 | **seo-master-plan** | `contexto-<slug>.md`, `arquitectura.csv`, `enlazado.csv`, `mapa-keywords.csv`, bundle de diagnóstico | FRAMING: `arquitectura\data\enfoque.md`; ENSAMBLAJE: `docs\superpowers\{specs,plans}\` |
@@ -45,10 +48,11 @@ Artefactos clave: `conexiones\conexiones.json` (seo-setup), `data\seo.db` (setup
 | **html-semantico** | HTML/URL ad hoc | informe en chat |
 | **content-engine** | tema/.docx, KB (silo aparte) | `Herramientas\SEO Blogs\content-engine\proyectos\<empresa>\` |
 | **seo-vitals** | `conexiones`/`sitio.yaml`, `data\*.csv`, CrUX | `cwv\seo.db` + `informes\CWV-<fecha>.md` |
-| **seo-analisis** | seo.db + crawl + DinoRank | tabla `hallazgos` + `analisis\*.md` |
-| **seo-analisis-gsc** | seo.db (GSC) + HTTP propio | tabla `url_status` + reportes chat |
-| **seo-cambios** | seo.db (GSC/GA4/Clarity/ranks) | tabla `changes_log` + veredictos |
-| **seo-dashboard** | seo.db (hallazgos, url_status, GSC) + clusters.json | `reportes\dashboard.html` + `clusters.json` |
+| **seo-analisis** | seo.db + crawl + DinoRank + `medicion\eventos\` (señal v2) | tabla `hallazgos` + `analisis\*.md` |
+| **seo-analisis-gsc** | seo.db (GSC) + HTTP propio | tabla `url_status` + reportes chat + tabla `hallazgos` (módulos `gsc_*`, flag `--hallazgos`) |
+| **seo-analisis-ga4** | seo.db (`ga4_daily`, `conversions`) + `medicion\eventos\{estado,eventos}.json` (gates v2) | tabla `hallazgos` (módulos `ga4_*`) + `analisis\*.md` |
+| **seo-cambios** | seo.db (GSC/GA4/Clarity/ranks + `conversions`) + `medicion\eventos\estado.json` (época) | tabla `changes_log` + veredictos |
+| **seo-dashboard** | seo.db (hallazgos, url_status, GSC/GA4, `conversions`, `cro_backlog`, `geo_*`, `lb_*`) + `cwv\seo.db` + clusters.json + artefactos (`schema-graph\`, `resultados\`, `medicion\eventos\estado.json`) | `reportes\dashboard.html` + `clusters.json` + transiciones humanas (hallazgos, cro_backlog, changes_log) |
 | **linkbuilding** | conexiones, GSC CSV, clusters.json, DinoRank/DataForSEO | tabla `lb_backlinks` + pipeline + `linkbuilding\informes\` |
 | **geo-audit** | seo.db, `geo\geo.yaml`, `base\`, `sitio.yaml` | hallazgos GEO + scores en seo.db + `geo\informes\` |
 | **claude-seo:*** (gap-filler) | ad hoc | content-brief, auditoría single-page, hreflang |
@@ -64,13 +68,16 @@ Artefactos clave: `conexiones\conexiones.json` (seo-setup), `data\seo.db` (setup
 ```
 0. seo-setup-cliente + base-cliente
 1. seo-sync BACKFILL ∥ extraccion crawl
-2. DIAGNÓSTICO: seo-analisis · seo-analisis-gsc · interlinking · schema-graph · geo-audit · seo-vitals · linkbuilding
+2. DIAGNÓSTICO: seo-analisis · seo-analisis-gsc · seo-analisis-ga4 · interlinking · schema-graph · geo-audit · seo-vitals · linkbuilding
 3. master FRAMING → enfoque.md
 4. arquitectura-seo (migración → arquitectura.csv + mapeo-301.csv)
 5. master ENSAMBLAJE → spec MIGRACIÓN + planes
 6. Ejecución: diseno-secciones · content-engine · schema-graph
-7. MONITOREO: seo-cambios · seo-dashboard · re-auditorías · seo-sync diario
+7. MONITOREO: seo-cambios · seo-dashboard · cro (fugas) · re-auditorías · seo-sync diario
 ```
+
+**Anillo 1 (loop SEO→negocio, corre dentro del monitoreo una vez pasado el Gate de medición):**
+`instrumentacion-eventos (1A.0: GTM+GA4, gate humano) → seo-sync sync_conversions (1A.1: tabla conversions, época sin bypass) → seo-analisis rank_no_convierte (señal v2) → cro (brief por página + cro_backlog) → humano implementa → seo-cambios logchange + beforeafter (rama conversión) → seo-dashboard (área negocio)`.
 
 **Escenario B — greenfield** (diseñar → construir → validar → lanzar → monitorear):
 ```
@@ -104,6 +111,7 @@ A y B convergen en el **monitoreo con seo.db poblado**.
 | # | Responsabilidad | Dónde vive hoy | Hecho | Frontera |
 |---|---|---|---|---|
 | 10 | Medición e instrumentación | seo-setup-cliente (crea `changes_log`) · seo-sync (baseline) · seo-cambios (`report.py beforeafter`) · seo-dashboard | todo cambio rastreable a un veredicto | 🟢 firme (gate, no fase final) |
+| 10b | Instrumentación de conversiones (Anillo 1) | instrumentacion-eventos (1A.0: GTM/GA4 + `estado.json`) · seo-sync `sync_conversions` (1A.1: tabla `conversions`) · cro (1B: diagnóstico de fugas) | loop rank_no_convierte → brief → veredicto de conversión | 🟢 firme (época sin bypass) |
 
 ### Capa 2 — Ejecución (loops concurrentes)
 

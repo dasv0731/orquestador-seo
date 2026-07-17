@@ -1,6 +1,6 @@
 ---
 name: orquestador-seo
-description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (bootstrap → diagnosis/framing → architecture → spec/plans → build/validation → monitor) by routing each phase to the OWNING skill of the ecosystem (base-cliente, seo-setup-cliente, seo-sync, extraccion, arquitectura-seo, seo-master-plan, diseno-secciones, schema-graph, interlinking, geo-audit, seo-vitals, linkbuilding, seo-analisis, seo-analisis-gsc, html-semantico, seo-cambios, seo-dashboard, content-engine); claude-seo:* only fills gaps. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
+description: Use as the single entry point for a complete SEO engagement. Conducts the full lifecycle (bootstrap → diagnosis/framing → architecture → spec/plans → build/validation → monitor) by routing each phase to the OWNING skill of the ecosystem (base-cliente, seo-setup-cliente, seo-sync, extraccion, arquitectura-seo, seo-master-plan, diseno-secciones, schema-graph, interlinking, geo-audit, seo-vitals, linkbuilding, seo-analisis, seo-analisis-gsc, seo-analisis-ga4, instrumentacion-eventos, cro, html-semantico, seo-cambios, seo-dashboard, content-engine); claude-seo:* only fills gaps. Triggers on "proyecto SEO completo", "orquestar SEO", "estrategia + auditoría SEO", "plan SEO con datos en vivo", "llevar un cliente SEO de principio a fin".
 ---
 
 # Orquestador SEO
@@ -24,7 +24,9 @@ Cada capacidad tiene UNA skill dueña. `claude-seo:*` es **gap-filler**: solo pa
 | Conocimiento de negocio | **base-cliente** (`base\contexto-<slug>.md`) |
 | Conexiones + poblar/actualizar seo.db | **seo-setup-cliente** (alta) · **seo-sync** (ingesta) |
 | Crawl del sitio (HTML, schemas, issues, inlinks) | **extraccion** |
-| Diagnóstico de datos (huérfanas, index bloat, CTR, quick wins, canibalización, 404) | **seo-analisis** · **seo-analisis-gsc** |
+| Diagnóstico de datos (huérfanas, index bloat, CTR, quick wins, canibalización, 404) | **seo-analisis** · **seo-analisis-gsc** · **seo-analisis-ga4** (mono-fuente GA4) |
+| Instrumentación de conversiones (GTM/GA4, contrato 1A.0) | **instrumentacion-eventos** (`medicion\eventos\`; la ingesta continua es de seo-sync) |
+| Diagnóstico CRO (rankea pero no convierte) | **cro** (`cro_backlog` + briefs en `medicion\cro\`; no implementa) |
 | PageRank interno / enlazado real | **interlinking** |
 | JSON-LD conectado del dominio | **schema-graph** |
 | Visibilidad/citability AI | **geo-audit** |
@@ -41,7 +43,7 @@ El orquestador nunca duplica: si una capacidad existe en una skill, se delega.
 
 ## Dependencias (verificar antes de empezar)
 
-Skills del ecosistema esperadas en `~/.claude/skills/` (repos privados en `dasv0731`): `seo-master-plan`, `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `html-semantico`, `seo-cambios`, `seo-dashboard`, `content-engine`. Gap-filler: `claude-seo` (se auto-carga como `claude-seo@skills-dir`).
+Skills del ecosistema esperadas en `~/.claude/skills/` (repos privados en `dasv0731`): `seo-master-plan`, `arquitectura-seo`, `base-cliente`, `seo-setup-cliente`, `seo-sync`, `extraccion`, `seo-analisis`, `seo-analisis-gsc`, `seo-analisis-ga4`, `interlinking`, `schema-graph`, `geo-audit`, `seo-vitals`, `linkbuilding`, `diseno-secciones`, `html-semantico`, `instrumentacion-eventos`, `cro`, `seo-cambios`, `seo-dashboard`, `content-engine`. Gap-filler: `claude-seo` (se auto-carga como `claude-seo@skills-dir`).
 
 Si falta una skill crítica para la fase en curso, detente y avisa. Comprueba con `claude plugin list` y `ls ~/.claude/skills/`.
 
@@ -73,13 +75,15 @@ Crea un todo por paso y vuelve a pasos anteriores cuando los datos lo exijan (Re
 0. seo-setup-cliente + base-cliente                          (Fase 0.0)
 1. seo-sync BACKFILL  ∥  extraccion crawl                    (paralelo)
 2. DIAGNÓSTICO (leen lo de 1):
-     seo-analisis · seo-analisis-gsc · interlinking ·
-     schema-graph · geo-audit · seo-vitals · linkbuilding
+     seo-analisis · seo-analisis-gsc · seo-analisis-ga4 ·
+     interlinking · schema-graph · geo-audit · seo-vitals · linkbuilding
 3. seo-master-plan FRAMING (§0–§2 → enfoque.md; restricción dominante)
 4. arquitectura-seo (modo migración → arquitectura.csv + mapeo-301.csv)
 5. seo-master-plan ENSAMBLAJE (§3–§14 → spec sabor MIGRACIÓN + planes)
 6. Ejecución: diseno-secciones · content-engine · schema-graph
 7. MONITOREO: seo-cambios (logchange + veredicto) · seo-dashboard ·
+     Anillo 1 (instrumentacion-eventos 1A.0 → seo-sync conversions 1A.1 →
+     seo-analisis rank_no_convierte → cro briefs) ·
      re-corridas geo-audit/seo-vitals/linkbuilding · seo-sync diario
 ```
 
@@ -98,7 +102,7 @@ A y B convergen en el **monitoreo con seo.db poblado**.
 
 ## Gate de medición (antes de abrir cualquier loop de ejecución)
 
-La medición es **pre-requisito, no fase final**. Antes de tocar contenido/técnico/enlazado (ejecución) debe existir: **baseline** registrado (crawl + `seo.db` con GSC/GA4 vía seo-sync) y **`changes_log` activo** para marcar el antes/después. Sin esto, los loops corren a ciegas. Lo instala **seo-setup-cliente** (crea `changes_log`) + **seo-sync** (puebla el baseline); cada cambio se registra con **seo-cambios** (`logchange`).
+La medición es **pre-requisito, no fase final**. Antes de tocar contenido/técnico/enlazado (ejecución) debe existir: **baseline** registrado (crawl + `seo.db` con GSC/GA4 vía seo-sync) y **`changes_log` activo** para marcar el antes/después. Sin esto, los loops corren a ciegas. Lo instala **seo-setup-cliente** (crea `changes_log`) + **seo-sync** (puebla el baseline); cada cambio se registra con **seo-cambios** (`logchange`). La pata de **negocio** del gate es el Anillo 1: **instrumentacion-eventos** (1A.0, GTM/GA4 + `estado.json`) habilita que **seo-sync** ingiera `conversions` (1A.1, época sin bypass) y que el veredicto de seo-cambios tenga rama de conversión.
 
 ## Regla de conflicto + arista de retorno (el corazón del orquestador)
 
