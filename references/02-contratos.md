@@ -51,6 +51,7 @@ Artefactos clave: `conexiones\conexiones.json` (seo-setup), `data\seo.db` (setup
 | **seo-analisis** | seo.db + crawl + DinoRank + `medicion\eventos\` (señal v2) | tabla `hallazgos` + `analisis\*.md` |
 | **seo-analisis-gsc** | seo.db (GSC) + HTTP propio | tabla `url_status` + reportes chat + tabla `hallazgos` (módulos `gsc_*`, flag `--hallazgos`) |
 | **seo-analisis-ga4** | seo.db (`ga4_daily`, `conversions`) + `medicion\eventos\{estado,eventos}.json` (gates v2) | tabla `hallazgos` (módulos `ga4_*`) + `analisis\*.md` |
+| **seo-analisis-clarity** | seo.db (`clarity_daily`, `clarity_heatmap`) | tabla `hallazgos` (módulos `clarity_*`) + reportes chat |
 | **seo-cambios** | seo.db (GSC/GA4/Clarity/ranks + `conversions`) + `medicion\eventos\estado.json` (época) | tabla `changes_log` + veredictos |
 | **seo-dashboard** | seo.db (hallazgos, url_status, GSC/GA4, `conversions`, `cro_backlog`, `geo_*`, `lb_*`) + `cwv\seo.db` + clusters.json + artefactos (`schema-graph\`, `resultados\`, `medicion\eventos\estado.json`) | `reportes\dashboard.html` + `clusters.json` + transiciones humanas (hallazgos, cro_backlog, changes_log) |
 | **linkbuilding** | conexiones, GSC CSV, clusters.json, DinoRank/DataForSEO | tabla `lb_backlinks` + pipeline + `linkbuilding\informes\` |
